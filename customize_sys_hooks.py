@@ -55,7 +55,7 @@ def run():
                     short_path = path[len(prefix):]
                     break
             
-            console.write_link(short_path, (u"pythonista3://" if sys.version_info > (3,) else u"pythonista://") + quote(os.path.relpath(path, DOCUMENTS)))
+            console.write_link(short_path, (u"pythonista3://" if os.path.basename(sys.executable) == "Pythonista3" else u"pythonista://") + quote(os.path.relpath(path, DOCUMENTS)))
     
     def displayhook(obj):
         # Uncomment the next line if you want None to be "visible" like any other object.
@@ -82,6 +82,9 @@ def run():
     sys.displayhook = displayhook
     
     def _excepthook(exc_type, exc_value, exc_traceback):
+        console.set_color(0.75, 0.0, 0.0)
+        print(u"Traceback (most recent call last):")
+        
         for filename, lineno, funcname, text in traceback.extract_tb(exc_traceback):
             
             console.set_color(0.2, 0.2, 0.2)
@@ -154,24 +157,21 @@ def run():
     
     def excepthook(exc_type, exc_value, exc_traceback):
         try:
-            console.set_color(0.75, 0.0, 0.0)
-            print(u"Traceback (most recent call last):")
-            _excepthook(exc_type, exc_value, exc_traceback)
-            
-            # On Python 2, exceptions have no __cause__.
-            while getattr(exc_value, "__cause__", None) is not None and not exc_value.__suppress_context__:
+            # On Python 2, exceptions have no __cause__, __context__ or __supress_context__.
+            if getattr(exc_value, "__cause__", None) is not None:
+                excepthook(exc_value.__cause__.__class__, exc_value.__cause__, exc_value.__cause__.__traceback__)
                 console.set_color(0.75, 0.0, 0.0)
                 print()
-                if exc_value.__cause__ == exc_value.__context__:
-                    print(u"During handling of the above exception, another exception occurred:")
-                else:
-                    print(u"The above exception was the direct cause of the following exception:")
-                
-                exc_value = exc_value.__cause__
-                exc_type = exc_value.__class__
-                exc_traceback = exc_value.__traceback__
-                
-                _excepthook(exc_type, exc_value, exc_traceback)
+                print(u"The above exception was the direct cause of the following exception:")
+                print()
+            elif getattr(exc_value, "__context__", None) is not None and not exc_value.__suppress_context__:
+                excepthook(exc_value.__context__.__class__, exc_value.__context__, exc_value.__context__.__traceback__)
+                console.set_color(0.75, 0.0, 0.0)
+                print()
+                print(u"During handling of the above exception, another exception occurred:")
+                print()
+            
+            _excepthook(exc_type, exc_value, exc_traceback)
         except Exception as err:
             traceback.print_exc()
         finally:
