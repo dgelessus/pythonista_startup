@@ -9,8 +9,7 @@ def run():
     import sys
     
     if sys.version_info < (3,):
-        print(u"The faulthandler module is only available under Python 3.", file=sys.stderr)
-        print(u"Please edit pythonista_startup/__init__.py and comment out the enable_faulthandler submodule.", file=sys.stderr)
+        print(u"Note: The enable_faulthandler module is not compatible with Python 2, skipping.")
         return
     
     # From this point on, code must be syntactically valid Python 2, but further compatibility is not necessary.
