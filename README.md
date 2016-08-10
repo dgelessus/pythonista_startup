@@ -10,7 +10,7 @@ If you don't have a `pythonista_startup` file/folder already, create a new file 
 
 Each script is contained in a single function named `run`. Copy the entire function block from the script and paste it into your `pythonista_startup` file, rename the `run` function to something different, and then call it.
 
-For example, a `pythonista_startup.py` with only `enable_faulthandler` could look like this:
+For example, a `pythonista_startup.py` with only `enable_faulthandler` could look like this ([full example](https://gist.github.com/dgelessus/fe8e267149862eb67127f4fff7e017be)):
 
 ```python
 def enable_faulthandler():
