@@ -14,6 +14,7 @@ def run():
     import os
     import shutil
     import sys
+    import console
     
     try:
         unicode
@@ -73,7 +74,8 @@ def run():
         
         stamped_name = LOGNAME_TEMPLATE.format(datetime.datetime.fromtimestamp(os.stat(os.path.join(LOGDIR, LOGNAME_DEFAULT)).st_mtime))
         shutil.move(os.path.join(LOGDIR, LOGNAME_DEFAULT), os.path.join(LOGDIR, stamped_name))
-        print(u"For details, see the log file '{}'.".format(stamped_name), file=sys.stderr)
+        console.write_link(u"For details, see the log file '{}'.".format(stamped_name), str(objc_util.nsurl(os.path.join(LOGDIR, stamped_name))))
+        
     
     if sys.version_info < (3,):
         print(u"Setting exception handler.")
