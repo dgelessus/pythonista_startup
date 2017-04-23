@@ -69,11 +69,23 @@ def run():
     
     # Notify the user that a crash has happened
     if did_fault:
+        import console
+        try:
+            from urllib.parse import quote
+        except ImportError:
+            from urllib import quote
+        
         print(u"Pythonista quit abnormally last time.", file=sys.stderr)
         
-        stamped_name = LOGNAME_TEMPLATE.format(datetime.datetime.fromtimestamp(os.stat(os.path.join(LOGDIR, LOGNAME_DEFAULT)).st_mtime))
-        shutil.move(os.path.join(LOGDIR, LOGNAME_DEFAULT), os.path.join(LOGDIR, stamped_name))
-        print(u"For details, see the log file '{}'.".format(stamped_name), file=sys.stderr)
+        default_path = os.path.join(LOGDIR, LOGNAME_DEFAULT)
+        stamped_name = LOGNAME_TEMPLATE.format(datetime.datetime.fromtimestamp(os.stat(default_path).st_mtime))
+        stamped_path = os.path.join(LOGDIR, stamped_name)
+        shutil.move(default_path, stamped_path)
+        print(u"For details, see the following log file: ", file=sys.stderr, end=u"")
+        protocol = u"pythonista3://" if os.path.basename(sys.executable) == "Pythonista3" else u"pythonista2://"
+        relpath = os.path.relpath(stamped_path, os.path.expanduser("~/Documents"))
+        console.write_link(stamped_name, protocol + quote(relpath))
+        print(file=sys.stderr)
     
     if sys.version_info < (3,):
         print(u"Setting exception handler.")
