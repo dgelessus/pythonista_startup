@@ -82,9 +82,7 @@ def run():
         stamped_path = os.path.join(LOGDIR, stamped_name)
         shutil.move(default_path, stamped_path)
         print(u"For details, see the following log file: ", file=sys.stderr, end=u"")
-        protocol = u"pythonista3://" if os.path.basename(sys.executable) == "Pythonista3" else u"pythonista2://"
-        relpath = os.path.relpath(stamped_path, os.path.expanduser("~/Documents"))
-        console.write_link(stamped_name, protocol + quote(relpath))
+        console.write_link(stamped_name, "file://" + quote(stamped_path))
         print(file=sys.stderr)
     
     if sys.version_info < (3,):
